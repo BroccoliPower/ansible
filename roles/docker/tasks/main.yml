@@ -1,0 +1,50 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install Docker
+  apt:
+    name:
+      - docker.io
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Add Docker repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  when: ansible_os_family == "Debian"
+
+- name: Install Docker
+  apt:
+    name:
+      - docker-ce
+      - containerd
+      - docker-ce-cli
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install Docker
+  yum:
+    name:
+      - docker
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Start Docker service
+  service:
+    name: docker
+    enabled: yes
+    state: started
+  when: ansible_os_family == "Debian"
+
+- name: Start Docker service
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  when: ansible_os_family == "RedHat"
